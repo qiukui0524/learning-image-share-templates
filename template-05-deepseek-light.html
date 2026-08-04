@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · DeepSeek Light</title>
+<style>
+/* ===== DeepSeek Light — 文档/代码结构风格 ===== */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+:root {
+  --bg: #f5f7fa; --surface: #ffffff; --border: #e4e7ed;
+  --text: #303133; --text-secondary: #909399; --accent: #3370ff;
+  --accent-light: #e8f0fe; --accent-hover: #245bdb;
+  --code-bg: #f0f2f5; --radius: 4px;
+  --font: 'Noto Sans SC', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; display: flex; }
+/* 文件树侧边栏 */
+.file-tree {
+  width: 280px; min-height: 100vh; background: var(--surface);
+  border-right: 1px solid var(--border); padding: 20px 0;
+  flex-shrink: 0; position: sticky; top: 0; max-height: 100vh; overflow-y: auto;
+}
+.tree-header {
+  padding: 0 20px 16px; border-bottom: 1px solid var(--border);
+  font-size: 0.8rem; color: var(--text-secondary);
+  font-family: var(--font-mono); letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tree-header .project-name { font-size: 0.95rem; color: var(--text); font-weight: 600; font-family: var(--font); letter-spacing: 0; margin-bottom: 4px; }
+.tree-item {
+  padding: 8px 20px; cursor: pointer; font-size: 0.9rem;
+  color: var(--text); transition: background 0.15s;
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 0.82rem;
+}
+.tree-item:hover { background: var(--accent-light); }
+.tree-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+.tree-item .icon-folder { color: var(--accent); font-size: 0.9rem; }
+.tree-item .icon-chevron { margin-left: auto; color: var(--text-secondary); font-size: 0.7rem; }
+/* 主编辑区 */
+.main-area { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.toolbar {
+  padding: 10px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); position: sticky; top: 0; z-index: 50;
+  font-family: var(--font-mono); font-size: 0.78rem;
+}
+.toolbar .breadcrumb { color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.toolbar .breadcrumb span { color: var(--accent); }
+.toolbar .back-btn {
+  background: none; border: 1px solid var(--border); padding: 4px 12px;
+  border-radius: var(--radius); cursor: pointer; font-size: 0.78rem;
+  color: var(--text-secondary); font-family: var(--font-mono);
+}
+.toolbar .back-btn:hover { background: var(--bg); }
+.content-area { flex: 1; padding: 32px; max-width: 1000px; width: 100%; margin: 0 auto; }
+.page { display: none; } .page.active { display: block; }
+.page-title {
+  font-size: 1.5rem; margin-bottom: 4px; font-weight: 600;
+  padding-bottom: 8px; border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+.page-subtitle { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 28px; font-family: var(--font-mono); }
+/* 免责声明 */
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card { max-width: 520px; width: 90%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; text-align: left; }
+.disclaimer-card h1 { font-size: 1.3rem; margin-bottom: 16px; font-weight: 600; font-family: var(--font-mono); color: var(--accent); }
+.disclaimer-card .content { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.8; margin-bottom: 28px; padding: 16px; background: var(--code-bg); border-radius: var(--radius); font-family: var(--font-mono); border-left: 3px solid var(--accent); }
+.disclaimer-btns { display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border-radius: var(--radius); font-size: 0.85rem; cursor: pointer; border: none; font-family: var(--font-mono); transition: all 0.15s; font-weight: 500; }
+.btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); } .btn-ghost:hover { background: var(--bg); }
+/* 期数 - 文件列表风格 */
+.period-grid { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.period-item {
+  padding: 10px 16px; cursor: pointer; font-size: 0.88rem;
+  transition: background 0.15s; border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono); display: flex; align-items: center; gap: 10px;
+}
+.period-item:last-child { border-bottom: none; }
+.period-item:hover { background: var(--accent-light); }
+.period-item::before { content: '📄'; font-size: 0.85rem; }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.image-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border); transition: transform 0.15s; }
+.image-grid img:hover { transform: scale(1.03); }
+.no-images { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-family: var(--font-mono); }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.93); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 4px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 1.8rem; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); }
+.admin-entry { text-align: center; padding: 30px; } .admin-entry a { color: var(--text-secondary); font-size: 0.75rem; text-decoration: none; font-family: var(--font-mono); opacity: 0.5; } .admin-entry a:hover { opacity: 0.9; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: var(--surface); border-radius: var(--radius); padding: 28px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
+.admin-panel h2 { font-size: 1.1rem; margin-bottom: 16px; font-family: var(--font-mono); color: var(--accent); }
+.admin-panel label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-secondary); font-family: var(--font-mono); }
+.admin-panel select, .admin-panel input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; margin-bottom: 14px; font-family: var(--font-mono); background: var(--bg); color: var(--text); }
+.admin-images { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.admin-images .thumb { position: relative; width: 70px; height: 70px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: #e03e3e; color: #fff; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; font-family: var(--font-mono); }
+.admin-login-err { color: #e03e3e; font-size: 0.8rem; margin-bottom: 10px; display: none; font-family: var(--font-mono); }
+@media (max-width: 640px) { .file-tree { display: none; } .main-area { width: 100%; } }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="disclaimerOverlay"><div class="disclaimer-card"><h1>/** 免责声明 */</h1><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="agreeDisclaimer()">同意 (Accept)</button><button class="btn btn-ghost" onclick="disagreeDisclaimer()">不同意 (Decline)</button></div></div></div>
+<aside class="file-tree" id="fileTree" style="display:none">
+  <div class="tree-header"><div class="project-name">📁 learning-share/</div>src / subjects /</div>
+  <nav id="treeNav"></nav>
+</aside>
+<div class="main-area">
+  <div class="toolbar" id="toolbar" style="display:none">
+    <button class="back-btn" id="backBtn" onclick="goBack()" style="display:none">← cd ..</button>
+    <div class="breadcrumb" id="breadcrumb">~/learning-share/ <span>subjects</span>/</div>
+  </div>
+  <div class="content-area">
+    <div class="page active" id="page-subjects"></div>
+    <div class="page" id="page-periods"><h2 class="page-title" id="periodsTitle"></h2><p class="page-subtitle">$ ls -la</p><div class="period-grid" id="periodGrid"></div></div>
+    <div class="page" id="page-images"><h2 class="page-title" id="imagesTitle"></h2><p class="page-subtitle">点击图片放大 · Click to enlarge</p><div class="image-grid" id="imageGrid"></div><div class="no-images" id="noImages" style="display:none">// No images found in this directory</div></div>
+    <div class="admin-entry"><a href="javascript:void(0)" onclick="openAdminLogin()">$ sudo admin</a></div>
+  </div>
+</div>
+<div class="admin-modal" id="adminLoginModal"><div class="admin-panel"><h2>$ admin login</h2><label>username:</label><input type="text" id="adminUser" placeholder="admin"><label>password:</label><input type="password" id="adminPass" placeholder="123456"><p class="admin-login-err" id="adminLoginErr">Error: Invalid credentials</p><button class="btn btn-primary" onclick="adminLogin()" style="width:100%;margin-bottom:8px">$ login</button><button class="btn btn-ghost" onclick="closeAdminLogin()" style="width:100%">$ cancel</button></div></div>
+<div class="admin-modal" id="adminPanelModal"><div class="admin-panel"><h2>$ image-manager</h2><label>subject:</label><select id="adminSubject"></select><label>period:</label><input type="number" id="adminPeriod" min="1" max="17" value="1"><button class="btn btn-primary" onclick="loadAdminImages()" style="width:100%;margin-bottom:10px">$ ls images</button><label>upload:</label><input type="file" id="adminFile" accept="image/*" multiple onchange="uploadImages()"><div class="admin-images" id="adminImages"></div><button class="btn btn-ghost" onclick="closeAdminPanel()" style="width:100%;margin-top:8px">$ exit</button></div></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><span class="lightbox-close">[x]</span><img id="lightboxImg" src="" alt=""></div>
+<script>
+const SUBJECTS=['语文','数学','英语','物理','化学','生物'],TOTAL=17,STORE='learning_share_images';let curSub='',curPer=0,stack=[];
+function agreeDisclaimer(){localStorage.setItem('learning_share_agreed','1');document.getElementById('disclaimerOverlay').style.display='none';document.getElementById('fileTree').style.display='block';document.getElementById('toolbar').style.display='flex';initAll();}
+function disagreeDisclaimer(){alert('您必须同意免责声明才能使用本站。');}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goBack(){if(stack.length>0){let p=stack.pop();if(p.page==='subjects'){showPage('page-subjects');document.getElementById('backBtn').style.display='none';document.getElementById('breadcrumb').innerHTML='~/learning-share/ <span>subjects</span>/';}else{showPage('page-periods');document.getElementById('breadcrumb').innerHTML=`~/learning-share/subjects/ <span>${curSub}</span>/`;}}if(stack.length===0)document.getElementById('backBtn').style.display='none';}
+function getImages(){try{return JSON.parse(localStorage.getItem(STORE))||{};}catch(e){return{};}}
+function saveImages(d){localStorage.setItem(STORE,JSON.stringify(d));}
+function getSI(s,p){let d=getImages();return d[s+'_'+p]||[];}
+function addImage(s,p,b){let d=getImages(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);saveImages(d);}
+function removeImage(s,p,i){let d=getImages(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];saveImages(d);}}
+function initAll(){document.getElementById('treeNav').innerHTML=SUBJECTS.map(s=>`<div class="tree-item" onclick="openSubject('${s}')"><span class="icon-folder">📂</span>${s}/<span class="icon-chevron">›</span></div>`).join('');}
+function openSubject(s){curSub=s;stack.push({page:'subjects'});document.getElementById('backBtn').style.display='inline-block';document.getElementById('breadcrumb').innerHTML=`~/learning-share/subjects/ <span>${s}</span>/`;document.getElementById('periodsTitle').textContent=s;showPage('page-periods');initPeriods();}
+function initPeriods(){let h='';for(let i=1;i<=TOTAL;i++)h+=`<div class="period-item" onclick="openPeriod(${i})">period_${String(i).padStart(2,'0')}</div>`;document.getElementById('periodGrid').innerHTML=h;}
+function openPeriod(p){curPer=p;stack.push({page:'periods'});document.getElementById('imagesTitle').textContent=curSub+' / period_'+String(p).padStart(2,'0');document.getElementById('breadcrumb').innerHTML=`~/learning-share/subjects/${curSub}/ <span>period_${String(p).padStart(2,'0')}</span>/`;showPage('page-images');loadImages();}
+function loadImages(){let imgs=getSI(curSub,curPer),g=document.getElementById('imageGrid'),n=document.getElementById('noImages');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" alt="image_${i+1}" onclick="event.stopPropagation();openLightbox('${img}')">`).join('');}}
+function openLightbox(src){document.getElementById('lightboxImg').src=src;document.getElementById('lightbox').classList.add('active');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('active');}
+function openAdminLogin(){document.getElementById('adminLoginModal').classList.add('active');document.getElementById('adminLoginErr').style.display='none';}
+function closeAdminLogin(){document.getElementById('adminLoginModal').classList.remove('active');}
+function adminLogin(){if(document.getElementById('adminUser').value.trim()==='admin'&&document.getElementById('adminPass').value.trim()==='123456'){closeAdminLogin();openAdminPanel();}else document.getElementById('adminLoginErr').style.display='block';}
+function openAdminPanel(){document.getElementById('adminSubject').innerHTML=SUBJECTS.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('adminPeriod').value=1;document.getElementById('adminPanelModal').classList.add('active');loadAdminImages();}
+function closeAdminPanel(){document.getElementById('adminPanelModal').classList.remove('active');}
+function loadAdminImages(){let s=document.getElementById('adminSubject').value,p=parseInt(document.getElementById('adminPeriod').value),imgs=getSI(s,p);document.getElementById('adminImages').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="deleteAdminImage('${s}',${p},${i})">x</span></div>`).join('');if(s===curSub&&p===curPer)loadImages();}
+function deleteAdminImage(s,p,i){if(!confirm('确定删除？'))return;removeImage(s,p,i);loadAdminImages();}
+function uploadImages(){let s=document.getElementById('adminSubject').value,p=parseInt(document.getElementById('adminPeriod').value),files=document.getElementById('adminFile').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){addImage(s,p,e.target.result);pr++;if(pr===files.length){loadAdminImages();document.getElementById('adminFile').value='';}};r.readAsDataURL(f);}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLightbox();closeAdminLogin();closeAdminPanel();}});
+if(localStorage.getItem('learning_share_agreed')==='1')agreeDisclaimer();
+</script>
+</body>
+</html>

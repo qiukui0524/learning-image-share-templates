@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · ChatGPT Dark</title>
+<style>
+/* ===== ChatGPT Dark ===== */
+:root {
+  --bg: #343541; --sidebar-bg: #202123; --sidebar-hover: #2b2c33;
+  --surface: #444654; --border: #565869; --text: #ececf1;
+  --text-secondary: #8e8ea0; --accent: #19c37d; --accent-light: #1a4735;
+  --accent-hover: #15a76b; --radius: 8px;
+  --font: 'Söhne', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.6; display: flex; }
+.sidebar { width: 260px; min-height: 100vh; background: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 16px 12px; flex-shrink: 0; position: sticky; top: 0; max-height: 100vh; overflow-y: auto; }
+.sidebar-logo { font-size: 1.15rem; font-weight: 600; padding: 8px 12px; margin-bottom: 16px; color: var(--text); border-radius: var(--radius); }
+.sidebar-logo span { color: var(--accent); }
+.sidebar-nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar-nav .nav-item { padding: 10px 14px; border-radius: var(--radius); cursor: pointer; font-size: 0.93rem; color: var(--text); transition: background 0.15s; display: flex; align-items: center; gap: 10px; }
+.sidebar-nav .nav-item:hover { background: var(--sidebar-hover); }
+.nav-icon { width: 28px; height: 28px; background: var(--accent-light); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--accent); flex-shrink: 0; }
+.main-area { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.top-bar { padding: 14px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--bg); position: sticky; top: 0; z-index: 50; }
+.back-btn { background: none; border: 1px solid var(--border); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font); }
+.back-btn:hover { background: var(--sidebar-hover); }
+.top-bar-title { font-weight: 500; font-size: 1rem; }
+.content-area { flex: 1; padding: 24px; max-width: 900px; width: 100%; margin: 0 auto; }
+.page { display: none; } .page.active { display: block; }
+.page-title { font-size: 1.6rem; margin-bottom: 6px; font-weight: 600; }
+.page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px; }
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card { max-width: 500px; width: 90%; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 40px 36px; text-align: center; }
+.disclaimer-card h1 { font-size: 1.5rem; margin-bottom: 12px; font-weight: 600; }
+.disclaimer-card .divider { width: 32px; height: 3px; background: var(--accent); margin: 0 auto 20px; border-radius: 2px; }
+.disclaimer-card .content { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 28px; padding: 18px; background: var(--bg); border-radius: var(--radius); }
+.disclaimer-btns { display: flex; gap: 10px; justify-content: center; }
+.btn { padding: 9px 24px; border-radius: 6px; font-size: 0.9rem; cursor: pointer; border: none; font-family: var(--font); transition: all 0.15s; font-weight: 500; }
+.btn-primary { background: var(--accent); color: #fff; } .btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); } .btn-ghost:hover { background: var(--sidebar-hover); }
+.period-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: 8px; }
+.period-item { aspect-ratio: 1; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; font-weight: 500; transition: all 0.15s; }
+.period-item:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; }
+.image-grid img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border); transition: transform 0.15s; }
+.image-grid img:hover { transform: scale(1.03); }
+.no-images { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 6px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+.admin-entry { text-align: center; padding: 30px; } .admin-entry a { color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; opacity: 0.4; } .admin-entry a:hover { opacity: 0.8; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: var(--surface); border-radius: 12px; padding: 28px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
+.admin-panel h2 { font-size: 1.2rem; margin-bottom: 16px; font-weight: 600; }
+.admin-panel label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-secondary); }
+.admin-panel select, .admin-panel input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; margin-bottom: 14px; font-family: var(--font); background: var(--bg); color: var(--text); }
+.admin-images { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.admin-images .thumb { position: relative; width: 72px; height: 72px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: rgba(239,68,68,0.9); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; line-height: 1; }
+.admin-login-err { color: #f87171; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+@media (max-width: 640px) { .sidebar { display: none; } .main-area { width: 100%; } }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="disclaimerOverlay"><div class="disclaimer-card"><h1>免责声明</h1><div class="divider"></div><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="agreeDisclaimer()">同意</button><button class="btn btn-ghost" onclick="disagreeDisclaimer()">不同意</button></div></div></div>
+<aside class="sidebar" id="sidebar" style="display:none"><div class="sidebar-logo">📖 学图<span>分享</span></div><nav class="sidebar-nav" id="sidebarNav"></nav></aside>
+<div class="main-area"><div class="top-bar" id="topBar" style="display:none"><button class="back-btn" id="backBtn" onclick="goBack()" style="display:none">← 返回</button><span class="top-bar-title" id="topBarTitle">科目</span></div>
+<div class="content-area"><div class="page active" id="page-subjects"></div><div class="page" id="page-periods"><h2 class="page-title" id="periodsTitle"></h2><p class="page-subtitle">选择一期查看图片</p><div class="period-grid" id="periodGrid"></div></div><div class="page" id="page-images"><h2 class="page-title" id="imagesTitle"></h2><p class="page-subtitle">点击图片放大查看</p><div class="image-grid" id="imageGrid"></div><div class="no-images" id="noImages" style="display:none">📭 该期暂无图片</div></div><div class="admin-entry"><a href="javascript:void(0)" onclick="openAdminLogin()">管理入口</a></div></div></div>
+<div class="admin-modal" id="adminLoginModal"><div class="admin-panel"><h2>管理员登录</h2><label>用户名</label><input type="text" id="adminUser" placeholder="admin"><label>密码</label><input type="password" id="adminPass" placeholder="123456"><p class="admin-login-err" id="adminLoginErr">用户名或密码错误</p><button class="btn btn-primary" onclick="adminLogin()" style="width:100%;margin-bottom:8px">登录</button><button class="btn btn-ghost" onclick="closeAdminLogin()" style="width:100%">取消</button></div></div>
+<div class="admin-modal" id="adminPanelModal"><div class="admin-panel"><h2>📁 图片管理</h2><label>科目</label><select id="adminSubject"></select><label>期数</label><input type="number" id="adminPeriod" min="1" max="17" value="1"><button class="btn btn-primary" onclick="loadAdminImages()" style="width:100%;margin-bottom:10px">查看图片</button><label>上传图片</label><input type="file" id="adminFile" accept="image/*" multiple onchange="uploadImages()"><div class="admin-images" id="adminImages"></div><button class="btn btn-ghost" onclick="closeAdminPanel()" style="width:100%;margin-top:8px">关闭</button></div></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox()"><span class="lightbox-close">&times;</span><img id="lightboxImg" src="" alt=""></div>
+<script>
+const SUBJECTS=['语文','数学','英语','物理','化学','生物'],TOTAL=17,STORE='learning_share_images';let curSub='',curPer=0,stack=[];
+function agreeDisclaimer(){localStorage.setItem('learning_share_agreed','1');document.getElementById('disclaimerOverlay').style.display='none';document.getElementById('sidebar').style.display='block';document.getElementById('topBar').style.display='flex';initAll();}
+function disagreeDisclaimer(){alert('您必须同意免责声明才能使用本站。');}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goBack(){if(stack.length>0){let p=stack.pop();if(p.page==='subjects'){showPage('page-subjects');document.getElementById('backBtn').style.display='none';document.getElementById('topBarTitle').textContent='科目';}else{showPage('page-periods');document.getElementById('topBarTitle').textContent=curSub;}}if(stack.length===0)document.getElementById('backBtn').style.display='none';}
+function getImages(){try{return JSON.parse(localStorage.getItem(STORE))||{};}catch(e){return{};}}
+function saveImages(d){localStorage.setItem(STORE,JSON.stringify(d));}
+function getSI(s,p){let d=getImages();return d[s+'_'+p]||[];}
+function addImage(s,p,b){let d=getImages(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);saveImages(d);}
+function removeImage(s,p,i){let d=getImages(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];saveImages(d);}}
+function initAll(){document.getElementById('sidebarNav').innerHTML=SUBJECTS.map(s=>`<div class="nav-item" onclick="openSubject('${s}')"><span class="nav-icon">${s[0]}</span>${s}</div>`).join('');}
+function openSubject(s){curSub=s;stack.push({page:'subjects'});document.getElementById('backBtn').style.display='inline-block';document.getElementById('topBarTitle').textContent=s;document.getElementById('periodsTitle').textContent=s;showPage('page-periods');initPeriods();}
+function initPeriods(){let h='';for(let i=1;i<=TOTAL;i++)h+=`<div class="period-item" onclick="openPeriod(${i})">${i}</div>`;document.getElementById('periodGrid').innerHTML=h;}
+function openPeriod(p){curPer=p;stack.push({page:'periods'});document.getElementById('imagesTitle').textContent=curSub+' · 第 '+p+' 期';document.getElementById('topBarTitle').textContent=curSub+' · 第 '+p+' 期';showPage('page-images');loadImages();}
+function loadImages(){let imgs=getSI(curSub,curPer),g=document.getElementById('imageGrid'),n=document.getElementById('noImages');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" alt="图片 ${i+1}" onclick="event.stopPropagation();openLightbox('${img}')">`).join('');}}
+function openLightbox(src){document.getElementById('lightboxImg').src=src;document.getElementById('lightbox').classList.add('active');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('active');}
+function openAdminLogin(){document.getElementById('adminLoginModal').classList.add('active');document.getElementById('adminLoginErr').style.display='none';}
+function closeAdminLogin(){document.getElementById('adminLoginModal').classList.remove('active');}
+function adminLogin(){if(document.getElementById('adminUser').value.trim()==='admin'&&document.getElementById('adminPass').value.trim()==='123456'){closeAdminLogin();openAdminPanel();}else document.getElementById('adminLoginErr').style.display='block';}
+function openAdminPanel(){document.getElementById('adminSubject').innerHTML=SUBJECTS.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('adminPeriod').value=1;document.getElementById('adminPanelModal').classList.add('active');loadAdminImages();}
+function closeAdminPanel(){document.getElementById('adminPanelModal').classList.remove('active');}
+function loadAdminImages(){let s=document.getElementById('adminSubject').value,p=parseInt(document.getElementById('adminPeriod').value),imgs=getSI(s,p);document.getElementById('adminImages').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="deleteAdminImage('${s}',${p},${i})">×</span></div>`).join('');if(s===curSub&&p===curPer)loadImages();}
+function deleteAdminImage(s,p,i){if(!confirm('确定删除？'))return;removeImage(s,p,i);loadAdminImages();}
+function uploadImages(){let s=document.getElementById('adminSubject').value,p=parseInt(document.getElementById('adminPeriod').value),files=document.getElementById('adminFile').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){addImage(s,p,e.target.result);pr++;if(pr===files.length){loadAdminImages();document.getElementById('adminFile').value='';}};r.readAsDataURL(f);}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLightbox();closeAdminLogin();closeAdminPanel();}});
+if(localStorage.getItem('learning_share_agreed')==='1')agreeDisclaimer();
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · 孟菲斯几何</title>
+<style>
+/* ===== 孟菲斯几何 — Memphis Geometric ===== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;500;600;700&display=swap');
+:root {
+  --font-title: 'Fredoka One', cursive;
+  --font: 'Quicksand', 'PingFang SC', sans-serif;
+  --pink: #ff6b9d; --blue: #4ec0e8; --yellow: #ffd93d; --green: #6bcb77;
+  --purple: #9b59b6; --orange: #ff8c42; --bg: #fafafc;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); min-height: 100vh; line-height: 1.6; background: var(--bg); color: #2d2d3f; }
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: repeating-linear-gradient(45deg, #fff 0px, #fff 20px, #f0f0f8 20px, #f0f0f8 40px); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card {
+  max-width: 480px; width: 90%; padding: 44px 36px; text-align: center;
+  background: #fff; border: 4px solid #2d2d3f;
+  box-shadow: 10px 10px 0 #ffd93d, 10px 10px 0 4px #2d2d3f;
+  position: relative;
+}
+.disclaimer-card::after { content: ''; position: absolute; top: -12px; right: -12px; width: 30px; height: 30px; background: var(--pink); border-radius: 50%; border: 3px solid #2d2d3f; }
+.disclaimer-card h1 { font-family: var(--font-title); font-size: 2rem; margin-bottom: 16px; color: #2d2d3f; text-shadow: 3px 3px 0 var(--yellow); }
+.disclaimer-card .content { font-size: 0.9rem; color: #666; line-height: 1.8; margin-bottom: 28px; padding: 18px; background: #f8f4ff; border: 2px dashed var(--purple); border-radius: 0; }
+.disclaimer-btns { display: flex; gap: 10px; justify-content: center; }
+.btn { padding: 12px 28px; font-size: 0.95rem; cursor: pointer; border: 3px solid #2d2d3f; font-family: var(--font); font-weight: 700; transition: all 0.2s; box-shadow: 4px 4px 0 #2d2d3f; }
+.btn-primary { background: var(--yellow); color: #2d2d3f; }
+.btn-primary:hover { background: #ffe566; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #2d2d3f; }
+.btn-ghost { background: #fff; color: #666; }
+.btn-ghost:hover { background: #f0f0f8; }
+.app-header { padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; background: #fff; border-bottom: 3px solid #2d2d3f; position: sticky; top: 0; z-index: 100; }
+.app-header .logo { font-family: var(--font-title); font-size: 1.3rem; color: #2d2d3f; display: flex; align-items: center; gap: 8px; }
+.app-header .logo .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+.back-btn { background: #fff; border: 3px solid #2d2d3f; padding: 6px 16px; cursor: pointer; font-size: 0.85rem; color: #2d2d3f; font-family: var(--font); font-weight: 600; box-shadow: 3px 3px 0 #2d2d3f; }
+.back-btn:hover { background: var(--yellow); }
+.page { display: none; max-width: 820px; margin: 0 auto; padding: 32px 20px; }
+.page.active { display: block; }
+.page-title { font-family: var(--font-title); font-size: 2rem; margin-bottom: 6px; color: #2d2d3f; }
+.page-subtitle { color: #666; font-size: 0.9rem; margin-bottom: 24px; font-weight: 500; }
+.subject-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.subject-card {
+  background: #fff; border: 3px solid #2d2d3f; padding: 24px 18px; cursor: pointer;
+  text-align: center; transition: all 0.2s; position: relative;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.08);
+}
+.subject-card:nth-child(1) { border-color: var(--pink); box-shadow: 6px 6px 0 var(--pink); }
+.subject-card:nth-child(2) { border-color: var(--blue); box-shadow: 6px 6px 0 var(--blue); }
+.subject-card:nth-child(3) { border-color: var(--yellow); box-shadow: 6px 6px 0 var(--yellow); }
+.subject-card:nth-child(4) { border-color: var(--green); box-shadow: 6px 6px 0 var(--green); }
+.subject-card:nth-child(5) { border-color: var(--purple); box-shadow: 6px 6px 0 var(--purple); }
+.subject-card:nth-child(6) { border-color: var(--orange); box-shadow: 6px 6px 0 var(--orange); }
+.subject-card:hover { transform: translate(-2px,-4px); }
+.subject-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 700; margin: 0 auto 10px; font-family: var(--font-title); }
+.subject-card:nth-child(1) .subject-icon { color: var(--pink); }
+.subject-card:nth-child(2) .subject-icon { color: var(--blue); }
+.subject-card:nth-child(3) .subject-icon { color: #e6c200; }
+.subject-card:nth-child(4) .subject-icon { color: var(--green); }
+.subject-card:nth-child(5) .subject-icon { color: var(--purple); }
+.subject-card:nth-child(6) .subject-icon { color: var(--orange); }
+.subject-name { font-size: 1.05rem; font-weight: 700; }
+.period-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+.period-item {
+  aspect-ratio: 1; background: #fff; border: 3px solid #2d2d3f; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.1rem; font-weight: 700; transition: all 0.2s;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+}
+.period-item:hover { background: var(--yellow); transform: scale(1.08); }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+.image-grid img { width: 100%; aspect-ratio: 3/4; object-fit: cover; cursor: pointer; transition: transform 0.2s; border: 3px solid #2d2d3f; box-shadow: 6px 6px 0 rgba(0,0,0,0.1); }
+.image-grid img:hover { transform: scale(1.04); }
+.no-images { text-align: center; padding: 60px 20px; color: #999; font-weight: 600; }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; border: 4px solid #fff; }
+.lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2.5rem; cursor: pointer; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-family: var(--font-title); }
+.admin-entry { text-align: center; padding: 40px 20px; } .admin-entry a { color: #999; font-size: 0.8rem; text-decoration: none; } .admin-entry a:hover { color: #2d2d3f; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: #fff; border: 4px solid #2d2d3f; box-shadow: 10px 10px 0 #ffd93d, 10px 10px 0 4px #2d2d3f; padding: 32px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
+.admin-panel h2 { font-family: var(--font-title); font-size: 1.4rem; margin-bottom: 20px; color: #2d2d3f; }
+.admin-panel label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: #666; font-weight: 600; }
+.admin-panel select, .admin-panel input { width: 100%; padding: 10px 14px; border: 3px solid #2d2d3f; font-size: 0.9rem; margin-bottom: 16px; font-family: var(--font); background: #fff; color: #2d2d3f; }
+.admin-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.admin-images .thumb { position: relative; width: 76px; height: 76px; overflow: hidden; border: 3px solid #2d2d3f; }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: var(--pink); color: #fff; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.8rem; font-weight: 700; }
+.admin-login-err { color: var(--pink); font-size: 0.85rem; margin-bottom: 12px; display: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="dO"><div class="disclaimer-card"><h1>免责声明</h1><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="A()">同意！</button><button class="btn btn-ghost" onclick="D()">不同意</button></div></div></div>
+<header class="app-header" id="aH" style="display:none"><div class="logo"><span class="dot" style="background:var(--pink)"></span><span class="dot" style="background:var(--blue)"></span>学图分享</div><button class="back-btn" id="bB" onclick="GB()" style="display:none">← 返回</button></header>
+<main><div class="page active" id="pS"><h2 class="page-title">✦ 科目 ✦</h2><p class="page-subtitle">选一个科目，开始冒险！</p><div class="subject-list" id="sL"></div></div>
+<div class="page" id="pP"><h2 class="page-title" id="pT"></h2><p class="page-subtitle">选一期查看</p><div class="period-grid" id="pG"></div></div>
+<div class="page" id="pI"><h2 class="page-title" id="iT"></h2><p class="page-subtitle">点击图片放大</p><div class="image-grid" id="iG"></div><div class="no-images" id="nI" style="display:none">📭 空空如也~</div></div></main>
+<div class="admin-entry"><a href="javascript:void(0)" onclick="OA()">🔧 管理入口</a></div>
+<div class="admin-modal" id="aLM"><div class="admin-panel"><h2>管理员登录</h2><label>用户名</label><input type="text" id="aU" placeholder="admin"><label>密码</label><input type="password" id="aP" placeholder="123456"><p class="admin-login-err" id="aLE">用户名或密码错误</p><button class="btn btn-primary" onclick="aL()" style="width:100%;margin-bottom:8px">登录</button><button class="btn btn-ghost" onclick="cL()" style="width:100%">取消</button></div></div>
+<div class="admin-modal" id="aPM"><div class="admin-panel"><h2>📸 图片管理</h2><label>科目</label><select id="aS"></select><label>期数</label><input type="number" id="aPe" min="1" max="17" value="1"><button class="btn btn-primary" onclick="LA()" style="width:100%;margin-bottom:12px">查看图片</button><label>上传图片</label><input type="file" id="aF" accept="image/*" multiple onchange="UI()"><div class="admin-images" id="aI"></div><button class="btn btn-ghost" onclick="cP()" style="width:100%;margin-top:8px">关闭</button></div></div>
+<div class="lightbox" id="lb" onclick="cLb()"><span class="lightbox-close">✕</span><img id="lbI" src="" alt=""></div>
+<script>const S=['语文','数学','英语','物理','化学','生物'],T=17,K='learning_share_images';let cs='',cp=0,st=[];function A(){localStorage.setItem('learning_share_agreed','1');document.getElementById('dO').style.display='none';document.getElementById('aH').style.display='flex';I();}function D(){alert('您必须同意免责声明才能使用本站。');}function SP(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}function GB(){if(st.length>0){let p=st.pop();if(p.page==='subjects'){SP('pS');document.getElementById('bB').style.display='none';}else SP('pP');}if(st.length===0)document.getElementById('bB').style.display='none';}function GIM(){try{return JSON.parse(localStorage.getItem(K))||{};}catch(e){return{};}}function SId(d){localStorage.setItem(K,JSON.stringify(d));}function GSI(s,p){let d=GIM();return d[s+'_'+p]||[];}function AIM(s,p,b){let d=GIM(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);SId(d);}function RIM(s,p,i){let d=GIM(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];SId(d);}}function I(){document.getElementById('sL').innerHTML=S.map(s=>`<div class="subject-card" onclick="OS('${s}')"><div class="subject-icon">${s[0]}</div><div class="subject-name">${s}</div></div>`).join('');}function OS(s){cs=s;st.push({page:'subjects'});document.getElementById('bB').style.display='inline-block';document.getElementById('pT').textContent=s;SP('pP');IP();}function IP(){let h='';for(let i=1;i<=T;i++)h+=`<div class="period-item" onclick="OP(${i})">${i}</div>`;document.getElementById('pG').innerHTML=h;}function OP(p){cp=p;st.push({page:'periods'});document.getElementById('iT').textContent=cs+' · 第 '+p+' 期';SP('pI');LI();}function LI(){let imgs=GSI(cs,cp),g=document.getElementById('iG'),n=document.getElementById('nI');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" onclick="event.stopPropagation();OL('${img}')">`).join('');}}function OL(src){document.getElementById('lbI').src=src;document.getElementById('lb').classList.add('active');}function cLb(){document.getElementById('lb').classList.remove('active');}function OA(){document.getElementById('aLM').classList.add('active');document.getElementById('aLE').style.display='none';}function cL(){document.getElementById('aLM').classList.remove('active');}function aL(){if(document.getElementById('aU').value.trim()==='admin'&&document.getElementById('aP').value.trim()==='123456'){cL();OPa();}else document.getElementById('aLE').style.display='block';}function OPa(){document.getElementById('aS').innerHTML=S.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('aPe').value=1;document.getElementById('aPM').classList.add('active');LA();}function cP(){document.getElementById('aPM').classList.remove('active');}function LA(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),imgs=GSI(s,p);document.getElementById('aI').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="DA('${s}',${p},${i})">×</span></div>`).join('');if(s===cs&&p===cp)LI();}function DA(s,p,i){if(!confirm('确定删除？'))return;RIM(s,p,i);LA();}function UI(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),files=document.getElementById('aF').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){AIM(s,p,e.target.result);pr++;if(pr===files.length){LA();document.getElementById('aF').value='';}};r.readAsDataURL(f);}}document.addEventListener('keydown',e=>{if(e.key==='Escape'){cLb();cL();cP();}});if(localStorage.getItem('learning_share_agreed')==='1')A();</script>
+</body>
+</html>

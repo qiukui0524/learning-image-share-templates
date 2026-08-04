@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · 纸艺折纸</title>
+<style>
+/* ===== 纸艺折纸 — Paper Craft ===== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+:root {
+  --font: 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --bg: #faf8f5; --surface: #ffffff;
+  --text: #3d3830; --text-secondary: #9d9488;
+  --accent: #e8985e; --blue: #7eb8da; --green: #8cb88a;
+  --yellow: #f0d878; --pink: #e8a8b8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); min-height: 100vh; line-height: 1.7; background: var(--bg); color: var(--text); }
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20 L40 20' stroke='%23e8e0d5' stroke-width='0.5'/%3E%3Cpath d='M20 0 L20 40' stroke='%23e8e0d5' stroke-width='0.5'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; }
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card { max-width: 460px; width: 90%; padding: 44px 32px; text-align: center; background: var(--surface); box-shadow: 0 2px 12px rgba(0,0,0,0.05), 0 8px 32px rgba(0,0,0,0.04); position: relative; }
+.disclaimer-card::after { content: ''; position: absolute; bottom: -8px; left: 16px; right: 16px; height: 8px; background: var(--yellow); transform: skewX(-2deg); }
+.disclaimer-card h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 16px; color: var(--text); }
+.disclaimer-card .content { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 28px; padding: 20px; background: #fdf8f2; border: 1px dashed #e0d8cc; }
+.disclaimer-btns { display: flex; gap: 10px; justify-content: center; }
+.btn { padding: 10px 28px; font-size: 0.9rem; cursor: pointer; border: none; font-family: var(--font); transition: all 0.2s; font-weight: 700; box-shadow: 0 3px 0 rgba(0,0,0,0.1); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #d8854a; transform: translateY(-1px); box-shadow: 0 4px 0 rgba(0,0,0,0.12); }
+.btn-ghost { background: #f0ece5; color: var(--text-secondary); }
+.btn-ghost:hover { background: #e8e0d5; }
+.app-header { padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: sticky; top: 0; z-index: 100; }
+.app-header .logo { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.app-header .logo .fold { width: 0; height: 0; border-left: 10px solid var(--accent); border-top: 10px solid transparent; border-bottom: 10px solid transparent; display: inline-block; }
+.back-btn { background: #f0ece5; border: none; padding: 6px 16px; cursor: pointer; font-size: 0.85rem; color: var(--text-secondary); font-family: var(--font); font-weight: 600; box-shadow: 0 2px 0 rgba(0,0,0,0.08); }
+.back-btn:hover { background: #e8e0d5; }
+.page { display: none; max-width: 820px; margin: 0 auto; padding: 32px 20px; position: relative; z-index: 1; }
+.page.active { display: block; }
+.page-title { font-size: 1.7rem; margin-bottom: 4px; font-weight: 800; }
+.page-subtitle { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 28px; }
+.subject-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.subject-card { background: var(--surface); padding: 24px 18px; cursor: pointer; text-align: center; transition: all 0.3s; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+.subject-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; }
+.subject-card:nth-child(1)::before { background: var(--accent); }
+.subject-card:nth-child(2)::before { background: var(--blue); }
+.subject-card:nth-child(3)::before { background: var(--yellow); }
+.subject-card:nth-child(4)::before { background: var(--green); }
+.subject-card:nth-child(5)::before { background: #b898d0; }
+.subject-card:nth-child(6)::before { background: var(--pink); }
+.subject-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+.subject-icon { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; margin: 0 auto 10px; color: var(--text); background: #f8f4ee; }
+.subject-name { font-size: 1.05rem; font-weight: 700; }
+.period-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 10px; }
+.period-item { aspect-ratio: 1; background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.05rem; font-weight: 700; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.05); position: relative; }
+.period-item::after { content: ''; position: absolute; bottom: 0; right: 0; width: 0; height: 0; border-left: 12px solid transparent; border-bottom: 12px solid var(--yellow); transition: all 0.2s; opacity: 0; }
+.period-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.period-item:hover::after { opacity: 1; }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.image-grid img { width: 100%; aspect-ratio: 3/4; object-fit: cover; cursor: pointer; transition: transform 0.3s; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.image-grid img:hover { transform: scale(1.04) rotate(1deg); }
+.no-images { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-weight: 600; }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(50,44,38,0.93); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; box-shadow: 0 0 0 8px #fff; }
+.lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.admin-entry { text-align: center; padding: 44px 20px; } .admin-entry a { color: var(--text-secondary); font-size: 0.8rem; text-decoration: none; opacity: 0.5; } .admin-entry a:hover { opacity: 1; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(50,44,38,0.4); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: var(--surface); padding: 32px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; box-shadow: 0 2px 12px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.05); }
+.admin-panel h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; }
+.admin-panel label { display: block; font-size: 0.85rem; margin-bottom: 4px; color: var(--text-secondary); }
+.admin-panel select, .admin-panel input { width: 100%; padding: 10px 12px; border: 1px solid #e0d8cc; font-size: 0.9rem; margin-bottom: 16px; font-family: var(--font); background: #fdf8f2; color: var(--text); }
+.admin-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.admin-images .thumb { position: relative; width: 76px; height: 76px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: rgba(200,100,80,0.9); color: #fff; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; font-weight: 700; }
+.admin-login-err { color: #c86450; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="dO"><div class="disclaimer-card"><h1>📄 免责声明</h1><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="A()">同意</button><button class="btn btn-ghost" onclick="D()">不同意</button></div></div></div>
+<header class="app-header" id="aH" style="display:none"><div class="logo"><span class="fold"></span>学图分享</div><button class="back-btn" id="bB" onclick="GB()" style="display:none">← 返回</button></header>
+<main><div class="page active" id="pS"><h2 class="page-title">科目</h2><p class="page-subtitle">选择一个科目</p><div class="subject-list" id="sL"></div></div>
+<div class="page" id="pP"><h2 class="page-title" id="pT"></h2><p class="page-subtitle">选择一期</p><div class="period-grid" id="pG"></div></div>
+<div class="page" id="pI"><h2 class="page-title" id="iT"></h2><p class="page-subtitle">点击图片放大</p><div class="image-grid" id="iG"></div><div class="no-images" id="nI" style="display:none">📭 暂无图片</div></div></main>
+<div class="admin-entry"><a href="javascript:void(0)" onclick="OA()">📎 管理入口</a></div>
+<div class="admin-modal" id="aLM"><div class="admin-panel"><h2>管理员登录</h2><label>用户名</label><input type="text" id="aU" placeholder="admin"><label>密码</label><input type="password" id="aP" placeholder="123456"><p class="admin-login-err" id="aLE">用户名或密码错误</p><button class="btn btn-primary" onclick="aL()" style="width:100%;margin-bottom:8px">登录</button><button class="btn btn-ghost" onclick="cL()" style="width:100%">取消</button></div></div>
+<div class="admin-modal" id="aPM"><div class="admin-panel"><h2>📸 图片管理</h2><label>科目</label><select id="aS"></select><label>期数</label><input type="number" id="aPe" min="1" max="17" value="1"><button class="btn btn-primary" onclick="LA()" style="width:100%;margin-bottom:12px">查看图片</button><label>上传图片</label><input type="file" id="aF" accept="image/*" multiple onchange="UI()"><div class="admin-images" id="aI"></div><button class="btn btn-ghost" onclick="cP()" style="width:100%;margin-top:8px">关闭</button></div></div>
+<div class="lightbox" id="lb" onclick="cLb()"><span class="lightbox-close">×</span><img id="lbI" src="" alt=""></div>
+<script>const S=['语文','数学','英语','物理','化学','生物'],T=17,K='learning_share_images';let cs='',cp=0,st=[];function A(){localStorage.setItem('learning_share_agreed','1');document.getElementById('dO').style.display='none';document.getElementById('aH').style.display='flex';I();}function D(){alert('您必须同意免责声明才能使用本站。');}function SP(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}function GB(){if(st.length>0){let p=st.pop();if(p.page==='subjects'){SP('pS');document.getElementById('bB').style.display='none';}else SP('pP');}if(st.length===0)document.getElementById('bB').style.display='none';}function GIM(){try{return JSON.parse(localStorage.getItem(K))||{};}catch(e){return{};}}function SId(d){localStorage.setItem(K,JSON.stringify(d));}function GSI(s,p){let d=GIM();return d[s+'_'+p]||[];}function AIM(s,p,b){let d=GIM(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);SId(d);}function RIM(s,p,i){let d=GIM(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];SId(d);}}function I(){document.getElementById('sL').innerHTML=S.map(s=>`<div class="subject-card" onclick="OS('${s}')"><div class="subject-icon">${s[0]}</div><div class="subject-name">${s}</div></div>`).join('');}function OS(s){cs=s;st.push({page:'subjects'});document.getElementById('bB').style.display='inline-block';document.getElementById('pT').textContent=s;SP('pP');IP();}function IP(){let h='';for(let i=1;i<=T;i++)h+=`<div class="period-item" onclick="OP(${i})">${i}</div>`;document.getElementById('pG').innerHTML=h;}function OP(p){cp=p;st.push({page:'periods'});document.getElementById('iT').textContent=cs+' · 第 '+p+' 期';SP('pI');LI();}function LI(){let imgs=GSI(cs,cp),g=document.getElementById('iG'),n=document.getElementById('nI');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" onclick="event.stopPropagation();OL('${img}')">`).join('');}}function OL(src){document.getElementById('lbI').src=src;document.getElementById('lb').classList.add('active');}function cLb(){document.getElementById('lb').classList.remove('active');}function OA(){document.getElementById('aLM').classList.add('active');document.getElementById('aLE').style.display='none';}function cL(){document.getElementById('aLM').classList.remove('active');}function aL(){if(document.getElementById('aU').value.trim()==='admin'&&document.getElementById('aP').value.trim()==='123456'){cL();OPa();}else document.getElementById('aLE').style.display='block';}function OPa(){document.getElementById('aS').innerHTML=S.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('aPe').value=1;document.getElementById('aPM').classList.add('active');LA();}function cP(){document.getElementById('aPM').classList.remove('active');}function LA(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),imgs=GSI(s,p);document.getElementById('aI').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="DA('${s}',${p},${i})">×</span></div>`).join('');if(s===cs&&p===cp)LI();}function DA(s,p,i){if(!confirm('确定删除？'))return;RIM(s,p,i);LA();}function UI(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),files=document.getElementById('aF').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){AIM(s,p,e.target.result);pr++;if(pr===files.length){LA();document.getElementById('aF').value='';}};r.readAsDataURL(f);}}document.addEventListener('keydown',e=>{if(e.key==='Escape'){cLb();cL();cP();}});if(localStorage.getItem('learning_share_agreed')==='1')A();</script>
+</body>
+</html>

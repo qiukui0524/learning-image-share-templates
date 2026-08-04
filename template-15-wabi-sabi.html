@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · 日式侘寂</title>
+<style>
+/* ===== 日式侘寂 — Wabi-sabi ===== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600&family=Zen+Kaku+Gothic+New:wght@300;400;500&display=swap');
+:root {
+  --font-display: 'Noto Serif JP', 'Noto Serif SC', serif;
+  --font-body: 'Zen Kaku Gothic New', 'Noto Sans SC', sans-serif;
+  --bg: #f5f0e8; --surface: #faf7f2; --border: #d9d0c1;
+  --text: #4a4238; --text-secondary: #9a8d7e;
+  --accent: #8c6b4a; --accent-hover: #6b4f35;
+  --clay: #e8ddd0; --moss: #7a8c6e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font-body); min-height: 100vh; line-height: 1.9; background: var(--bg); color: var(--text); font-weight: 300; }
+body::before { content: ''; position: fixed; inset: 0; background: url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 0; }
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card {
+  max-width: 440px; width: 90%; padding: 48px 36px; text-align: center;
+  background: var(--surface); border: 1px solid var(--border);
+  box-shadow: 0 4px 24px rgba(74,66,56,0.06);
+}
+.disclaimer-card h1 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; margin-bottom: 20px; color: var(--text); letter-spacing: 0.12em; }
+.disclaimer-card .content { font-size: 0.85rem; color: var(--text-secondary); line-height: 2.2; margin-bottom: 32px; padding: 24px; background: var(--bg); font-weight: 300; }
+.disclaimer-btns { display: flex; gap: 12px; justify-content: center; }
+.btn { padding: 10px 32px; font-size: 0.85rem; cursor: pointer; border: 1px solid var(--border); font-family: var(--font-body); transition: all 0.3s; font-weight: 400; letter-spacing: 0.06em; background: var(--surface); }
+.btn-primary { background: var(--accent); color: #faf7f2; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--clay); }
+.app-header { padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.app-header .logo { font-family: var(--font-display); font-size: 1.2rem; color: var(--text); letter-spacing: 0.1em; }
+.back-btn { background: none; border: none; padding: 6px 0; cursor: pointer; font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-body); letter-spacing: 0.08em; }
+.back-btn:hover { color: var(--accent); }
+.page { display: none; max-width: 760px; margin: 0 auto; padding: 40px 24px; position: relative; z-index: 1; }
+.page.active { display: block; }
+.page-title { font-family: var(--font-display); font-size: 1.6rem; margin-bottom: 4px; font-weight: 400; letter-spacing: 0.08em; }
+.page-subtitle { color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 36px; letter-spacing: 0.06em; font-weight: 300; }
+.subject-list { display: flex; flex-direction: column; gap: 2px; }
+.subject-card {
+  background: var(--surface); padding: 18px 24px; cursor: pointer;
+  display: flex; align-items: center; gap: 16px; transition: all 0.3s;
+  border-left: 3px solid transparent;
+}
+.subject-card:hover { border-left-color: var(--accent); background: #fdfaf6; }
+.subject-icon { width: 44px; height: 44px; background: var(--clay); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--accent); flex-shrink: 0; font-family: var(--font-display); }
+.subject-name { font-size: 1rem; font-weight: 400; letter-spacing: 0.06em; }
+.subject-arrow { margin-left: auto; color: var(--border); }
+.period-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); gap: 8px; }
+.period-item {
+  aspect-ratio: 1; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 0.95rem; font-weight: 400; transition: all 0.3s;
+}
+.period-item:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+.image-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; transition: all 0.3s; filter: saturate(0.85); }
+.image-grid img:hover { filter: saturate(1); transform: scale(1.03); }
+.no-images { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-weight: 300; }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(40,36,30,0.94); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; object-fit: contain; }
+.lightbox-close { position: absolute; top: 24px; right: 24px; color: #fff; font-size: 1.8rem; cursor: pointer; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; font-weight: 100; }
+.admin-entry { text-align: center; padding: 48px 20px; } .admin-entry a { color: var(--text-secondary); font-size: 0.75rem; text-decoration: none; opacity: 0.3; } .admin-entry a:hover { opacity: 0.8; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(40,36,30,0.4); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: var(--surface); border: 1px solid var(--border); padding: 36px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; }
+.admin-panel h2 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 24px; font-weight: 400; letter-spacing: 0.08em; }
+.admin-panel label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-secondary); font-weight: 300; }
+.admin-panel select, .admin-panel input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); font-size: 0.85rem; margin-bottom: 20px; font-family: var(--font-body); background: var(--bg); color: var(--text); }
+.admin-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.admin-images .thumb { position: relative; width: 76px; height: 76px; overflow: hidden; }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: rgba(160,80,60,0.9); color: #fff; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; }
+.admin-login-err { color: #a0503c; font-size: 0.8rem; margin-bottom: 12px; display: none; }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="dO"><div class="disclaimer-card"><h1>免 責 事 項</h1><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="A()">同意</button><button class="btn btn-ghost" onclick="D()">不同意</button></div></div></div>
+<header class="app-header" id="aH" style="display:none"><div class="logo">学 図 分 享</div><button class="back-btn" id="bB" onclick="GB()" style="display:none">← 戻る</button></header>
+<main><div class="page active" id="pS"><h2 class="page-title">科 目</h2><p class="page-subtitle">科目を選んでください</p><div class="subject-list" id="sL"></div></div>
+<div class="page" id="pP"><h2 class="page-title" id="pT"></h2><p class="page-subtitle">期を選ぶ</p><div class="period-grid" id="pG"></div></div>
+<div class="page" id="pI"><h2 class="page-title" id="iT"></h2><p class="page-subtitle">画像をクリックして拡大</p><div class="image-grid" id="iG"></div><div class="no-images" id="nI" style="display:none">まだ画像がありません</div></div></main>
+<div class="admin-entry"><a href="javascript:void(0)" onclick="OA()">管 理</a></div>
+<div class="admin-modal" id="aLM"><div class="admin-panel"><h2>管理者ログイン</h2><label>ユーザー名</label><input type="text" id="aU" placeholder="admin"><label>パスワード</label><input type="password" id="aP" placeholder="123456"><p class="admin-login-err" id="aLE">認証エラー</p><button class="btn btn-primary" onclick="aL()" style="width:100%;margin-bottom:8px">ログイン</button><button class="btn btn-ghost" onclick="cL()" style="width:100%">取消</button></div></div>
+<div class="admin-modal" id="aPM"><div class="admin-panel"><h2>画像管理</h2><label>科目</label><select id="aS"></select><label>期数</label><input type="number" id="aPe" min="1" max="17" value="1"><button class="btn btn-primary" onclick="LA()" style="width:100%;margin-bottom:12px">画像を表示</button><label>画像アップロード</label><input type="file" id="aF" accept="image/*" multiple onchange="UI()"><div class="admin-images" id="aI"></div><button class="btn btn-ghost" onclick="cP()" style="width:100%;margin-top:8px">閉じる</button></div></div>
+<div class="lightbox" id="lb" onclick="cLb()"><span class="lightbox-close">×</span><img id="lbI" src="" alt=""></div>
+<script>const S=['语文','数学','英语','物理','化学','生物'],T=17,K='learning_share_images';let cs='',cp=0,st=[];function A(){localStorage.setItem('learning_share_agreed','1');document.getElementById('dO').style.display='none';document.getElementById('aH').style.display='flex';I();}function D(){alert('您必须同意免责声明才能使用本站。');}function SP(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}function GB(){if(st.length>0){let p=st.pop();if(p.page==='subjects'){SP('pS');document.getElementById('bB').style.display='none';}else SP('pP');}if(st.length===0)document.getElementById('bB').style.display='none';}function GIM(){try{return JSON.parse(localStorage.getItem(K))||{};}catch(e){return{};}}function SId(d){localStorage.setItem(K,JSON.stringify(d));}function GSI(s,p){let d=GIM();return d[s+'_'+p]||[];}function AIM(s,p,b){let d=GIM(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);SId(d);}function RIM(s,p,i){let d=GIM(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];SId(d);}}function I(){document.getElementById('sL').innerHTML=S.map(s=>`<div class="subject-card" onclick="OS('${s}')"><div class="subject-icon">${s[0]}</div><span class="subject-name">${s}</span><span class="subject-arrow">→</span></div>`).join('');}function OS(s){cs=s;st.push({page:'subjects'});document.getElementById('bB').style.display='inline-block';document.getElementById('pT').textContent=s;SP('pP');IP();}function IP(){let h='';for(let i=1;i<=T;i++)h+=`<div class="period-item" onclick="OP(${i})">${i}</div>`;document.getElementById('pG').innerHTML=h;}function OP(p){cp=p;st.push({page:'periods'});document.getElementById('iT').textContent=cs+' · 第 '+p+' 期';SP('pI');LI();}function LI(){let imgs=GSI(cs,cp),g=document.getElementById('iG'),n=document.getElementById('nI');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" onclick="event.stopPropagation();OL('${img}')">`).join('');}}function OL(src){document.getElementById('lbI').src=src;document.getElementById('lb').classList.add('active');}function cLb(){document.getElementById('lb').classList.remove('active');}function OA(){document.getElementById('aLM').classList.add('active');document.getElementById('aLE').style.display='none';}function cL(){document.getElementById('aLM').classList.remove('active');}function aL(){if(document.getElementById('aU').value.trim()==='admin'&&document.getElementById('aP').value.trim()==='123456'){cL();OPa();}else document.getElementById('aLE').style.display='block';}function OPa(){document.getElementById('aS').innerHTML=S.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('aPe').value=1;document.getElementById('aPM').classList.add('active');LA();}function cP(){document.getElementById('aPM').classList.remove('active');}function LA(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),imgs=GSI(s,p);document.getElementById('aI').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="DA('${s}',${p},${i})">×</span></div>`).join('');if(s===cs&&p===cp)LI();}function DA(s,p,i){if(!confirm('确定删除？'))return;RIM(s,p,i);LA();}function UI(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),files=document.getElementById('aF').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){AIM(s,p,e.target.result);pr++;if(pr===files.length){LA();document.getElementById('aF').value='';}};r.readAsDataURL(f);}}document.addEventListener('keydown',e=>{if(e.key==='Escape'){cLb();cL();cP();}});if(localStorage.getItem('learning_share_agreed')==='1')A();</script>
+</body>
+</html>

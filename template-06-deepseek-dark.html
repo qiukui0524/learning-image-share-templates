@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学图分享 · DeepSeek Dark</title>
+<style>
+/* ===== DeepSeek Dark ===== */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+:root {
+  --bg: #1e1e2e; --surface: #282840; --border: #3d3d5c;
+  --text: #cdd6f4; --text-secondary: #6c7086; --accent: #89b4fa;
+  --accent-light: #1e2a45; --accent-hover: #74a8f7;
+  --code-bg: #181825; --radius: 4px;
+  --font: 'Noto Sans SC', 'Inter', 'PingFang SC', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Consolas', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; display: flex; }
+.file-tree { width: 280px; min-height: 100vh; background: var(--surface); border-right: 1px solid var(--border); padding: 20px 0; flex-shrink: 0; position: sticky; top: 0; max-height: 100vh; overflow-y: auto; }
+.tree-header { padding: 0 20px 16px; border-bottom: 1px solid var(--border); font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono); letter-spacing: 1px; text-transform: uppercase; }
+.tree-header .project-name { font-size: 0.95rem; color: var(--text); font-weight: 600; font-family: var(--font); letter-spacing: 0; margin-bottom: 4px; }
+.tree-item { padding: 8px 20px; cursor: pointer; font-size: 0.82rem; color: var(--text); transition: background 0.15s; display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); }
+.tree-item:hover { background: var(--accent-light); } .tree-item.active { background: var(--accent-light); color: var(--accent); }
+.tree-item .icon-folder { color: var(--accent); } .tree-item .icon-chevron { margin-left: auto; color: var(--text-secondary); }
+.main-area { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.toolbar { padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; background: var(--surface); position: sticky; top: 0; z-index: 50; font-family: var(--font-mono); font-size: 0.78rem; }
+.toolbar .breadcrumb { color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.toolbar .breadcrumb span { color: var(--accent); }
+.toolbar .back-btn { background: none; border: 1px solid var(--border); padding: 4px 12px; border-radius: var(--radius); cursor: pointer; font-size: 0.78rem; color: var(--text-secondary); font-family: var(--font-mono); }
+.toolbar .back-btn:hover { background: var(--bg); }
+.content-area { flex: 1; padding: 32px; max-width: 1000px; width: 100%; margin: 0 auto; }
+.page { display: none; } .page.active { display: block; }
+.page-title { font-size: 1.5rem; margin-bottom: 4px; font-weight: 600; padding-bottom: 8px; border-bottom: 2px solid var(--accent); display: inline-block; }
+.page-subtitle { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 28px; font-family: var(--font-mono); }
+.disclaimer-overlay { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.disclaimer-card { max-width: 520px; width: 90%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 36px; text-align: left; }
+.disclaimer-card h1 { font-size: 1.3rem; margin-bottom: 16px; font-weight: 600; font-family: var(--font-mono); color: var(--accent); }
+.disclaimer-card .content { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.8; margin-bottom: 28px; padding: 16px; background: var(--code-bg); border-radius: var(--radius); font-family: var(--font-mono); border-left: 3px solid var(--accent); }
+.disclaimer-btns { display: flex; gap: 10px; }
+.btn { padding: 8px 20px; border-radius: var(--radius); font-size: 0.85rem; cursor: pointer; border: none; font-family: var(--font-mono); transition: all 0.15s; font-weight: 500; }
+.btn-primary { background: var(--accent); color: var(--bg); } .btn-primary:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); } .btn-ghost:hover { background: var(--bg); }
+.period-grid { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.period-item { padding: 10px 16px; cursor: pointer; font-size: 0.88rem; transition: background 0.15s; border-bottom: 1px solid var(--border); font-family: var(--font-mono); display: flex; align-items: center; gap: 10px; }
+.period-item:last-child { border-bottom: none; } .period-item:hover { background: var(--accent-light); } .period-item::before { content: '📄'; }
+.image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.image-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--border); transition: transform 0.15s; }
+.image-grid img:hover { transform: scale(1.03); }
+.no-images { text-align: center; padding: 60px 20px; color: var(--text-secondary); font-family: var(--font-mono); }
+.lightbox { display: none; position: fixed; inset: 0; z-index: 9998; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; cursor: pointer; }
+.lightbox.active { display: flex; } .lightbox img { max-width: 92vw; max-height: 90vh; border-radius: 4px; object-fit: contain; }
+.lightbox-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 1.8rem; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); }
+.admin-entry { text-align: center; padding: 30px; } .admin-entry a { color: var(--text-secondary); font-size: 0.75rem; text-decoration: none; font-family: var(--font-mono); opacity: 0.4; } .admin-entry a:hover { opacity: 0.8; }
+.admin-modal { display: none; position: fixed; inset: 0; z-index: 9997; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
+.admin-modal.active { display: flex; }
+.admin-panel { background: var(--surface); border-radius: var(--radius); padding: 28px; width: 90%; max-width: 480px; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border); }
+.admin-panel h2 { font-size: 1.1rem; margin-bottom: 16px; font-family: var(--font-mono); color: var(--accent); }
+.admin-panel label { display: block; font-size: 0.8rem; margin-bottom: 4px; color: var(--text-secondary); font-family: var(--font-mono); }
+.admin-panel select, .admin-panel input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; margin-bottom: 14px; font-family: var(--font-mono); background: var(--bg); color: var(--text); }
+.admin-images { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.admin-images .thumb { position: relative; width: 70px; height: 70px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+.admin-images .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.admin-images .thumb .del { position: absolute; top: 2px; right: 2px; background: #e03e3e; color: #fff; width: 18px; height: 18px; border-radius: 2px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.7rem; font-family: var(--font-mono); }
+.admin-login-err { color: #f38ba8; font-size: 0.8rem; margin-bottom: 10px; display: none; font-family: var(--font-mono); }
+@media (max-width: 640px) { .file-tree { display: none; } .main-area { width: 100%; } }
+</style>
+</head>
+<body>
+<div class="disclaimer-overlay" id="dOL"><div class="disclaimer-card"><h1>/** 免责声明 */</h1><div class="content">[此处为免责声明内容]</div><div class="disclaimer-btns"><button class="btn btn-primary" onclick="A()">同意</button><button class="btn btn-ghost" onclick="D()">不同意</button></div></div></div>
+<aside class="file-tree" id="FT" style="display:none"><div class="tree-header"><div class="project-name">📁 learning-share/</div>src/subjects/</div><nav id="TN"></nav></aside>
+<div class="main-area"><div class="toolbar" id="TB" style="display:none"><button class="back-btn" id="BB" onclick="GB()" style="display:none">← cd ..</button><div class="breadcrumb" id="BC">~/learning-share/ <span>subjects</span>/</div></div>
+<div class="content-area"><div class="page active" id="pS"></div><div class="page" id="pP"><h2 class="page-title" id="pT"></h2><p class="page-subtitle">$ ls -la</p><div class="period-grid" id="pG"></div></div><div class="page" id="pI"><h2 class="page-title" id="iT"></h2><p class="page-subtitle">点击图片放大</p><div class="image-grid" id="iG"></div><div class="no-images" id="nI" style="display:none">// No images found</div></div><div class="admin-entry"><a href="javascript:void(0)" onclick="OA()">$ sudo admin</a></div></div></div>
+<div class="admin-modal" id="aLM"><div class="admin-panel"><h2>$ admin login</h2><label>username:</label><input type="text" id="aU" placeholder="admin"><label>password:</label><input type="password" id="aP" placeholder="123456"><p class="admin-login-err" id="aLE">Error: Invalid credentials</p><button class="btn btn-primary" onclick="aL()" style="width:100%;margin-bottom:8px">$ login</button><button class="btn btn-ghost" onclick="cL()" style="width:100%">$ cancel</button></div></div>
+<div class="admin-modal" id="aPM"><div class="admin-panel"><h2>$ image-manager</h2><label>subject:</label><select id="aS"></select><label>period:</label><input type="number" id="aPe" min="1" max="17" value="1"><button class="btn btn-primary" onclick="LA()" style="width:100%;margin-bottom:10px">$ ls images</button><label>upload:</label><input type="file" id="aF" accept="image/*" multiple onchange="UI()"><div class="admin-images" id="aI"></div><button class="btn btn-ghost" onclick="cP()" style="width:100%;margin-top:8px">$ exit</button></div></div>
+<div class="lightbox" id="lb" onclick="cLb()"><span class="lightbox-close">[x]</span><img id="lbI" src="" alt=""></div>
+<script>
+const S=['语文','数学','英语','物理','化学','生物'],T=17,K='learning_share_images';let cs='',cp=0,st=[];
+function A(){localStorage.setItem('learning_share_agreed','1');document.getElementById('dOL').style.display='none';document.getElementById('FT').style.display='block';document.getElementById('TB').style.display='flex';I();}
+function D(){alert('您必须同意免责声明才能使用本站。');}
+function SP(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function GB(){if(st.length>0){let p=st.pop();if(p.page==='subjects'){SP('pS');document.getElementById('BB').style.display='none';document.getElementById('BC').innerHTML='~/learning-share/ <span>subjects</span>/';}else{SP('pP');document.getElementById('BC').innerHTML=`~/learning-share/subjects/ <span>${cs}</span>/`;}}if(st.length===0)document.getElementById('BB').style.display='none';}
+function GI(){try{return JSON.parse(localStorage.getItem(K))||{};}catch(e){return{};}}
+function SI(d){localStorage.setItem(K,JSON.stringify(d));}
+function GSI(s,p){let d=GI();return d[s+'_'+p]||[];}
+function AI(s,p,b){let d=GI(),k=s+'_'+p;if(!d[k])d[k]=[];d[k].push(b);SI(d);}
+function RI(s,p,i){let d=GI(),k=s+'_'+p;if(d[k]){d[k].splice(i,1);if(!d[k].length)delete d[k];SI(d);}}
+function I(){document.getElementById('TN').innerHTML=S.map(s=>`<div class="tree-item" onclick="OS('${s}')"><span class="icon-folder">📂</span>${s}/<span class="icon-chevron">›</span></div>`).join('');}
+function OS(s){cs=s;st.push({page:'subjects'});document.getElementById('BB').style.display='inline-block';document.getElementById('BC').innerHTML=`~/learning-share/subjects/ <span>${s}</span>/`;document.getElementById('pT').textContent=s;SP('pP');IP();}
+function IP(){let h='';for(let i=1;i<=T;i++)h+=`<div class="period-item" onclick="OP(${i})">period_${String(i).padStart(2,'0')}</div>`;document.getElementById('pG').innerHTML=h;}
+function OP(p){cp=p;st.push({page:'periods'});document.getElementById('iT').textContent=cs+' / period_'+String(p).padStart(2,'0');document.getElementById('BC').innerHTML=`~/learning-share/subjects/${cs}/ <span>period_${String(p).padStart(2,'0')}</span>/`;SP('pI');LI();}
+function LI(){let imgs=GSI(cs,cp),g=document.getElementById('iG'),n=document.getElementById('nI');if(!imgs.length){g.innerHTML='';n.style.display='block';}else{n.style.display='none';g.innerHTML=imgs.map((img,i)=>`<img src="${img}" alt="img_${i+1}" onclick="event.stopPropagation();OL('${img}')">`).join('');}}
+function OL(src){document.getElementById('lbI').src=src;document.getElementById('lb').classList.add('active');}
+function cLb(){document.getElementById('lb').classList.remove('active');}
+function OA(){document.getElementById('aLM').classList.add('active');document.getElementById('aLE').style.display='none';}
+function cL(){document.getElementById('aLM').classList.remove('active');}
+function aL(){if(document.getElementById('aU').value.trim()==='admin'&&document.getElementById('aP').value.trim()==='123456'){cL();OPa();}else document.getElementById('aLE').style.display='block';}
+function OPa(){document.getElementById('aS').innerHTML=S.map(s=>`<option value="${s}">${s}</option>`).join('');document.getElementById('aPe').value=1;document.getElementById('aPM').classList.add('active');LA();}
+function cP(){document.getElementById('aPM').classList.remove('active');}
+function LA(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),imgs=GSI(s,p);document.getElementById('aI').innerHTML=imgs.map((img,i)=>`<div class="thumb"><img src="${img}"><span class="del" onclick="DA('${s}',${p},${i})">x</span></div>`).join('');if(s===cs&&p===cp)LI();}
+function DA(s,p,i){if(!confirm('确定删除？'))return;RI(s,p,i);LA();}
+function UI(){let s=document.getElementById('aS').value,p=parseInt(document.getElementById('aPe').value),files=document.getElementById('aF').files,pr=0;for(let f of files){let r=new FileReader();r.onload=function(e){AI(s,p,e.target.result);pr++;if(pr===files.length){LA();document.getElementById('aF').value='';}};r.readAsDataURL(f);}}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){cLb();cL();cP();}});
+if(localStorage.getItem('learning_share_agreed')==='1')A();
+</script>
+</body>
+</html>
